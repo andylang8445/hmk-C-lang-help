@@ -1,0 +1,2 @@
+# hmk C lang help
+ 
