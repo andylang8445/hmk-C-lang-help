@@ -13,6 +13,11 @@
 #define PARALLEL 2
 #define PI 3.14159265359
 
+struct angleInBothDegreeAndRadians{
+    double degree;
+    double radian;
+};
+
 // 3D coordinates.
 struct Coordinate3D {// 구조체 정의
     double x,y,z;
@@ -31,8 +36,9 @@ double convertRadtoDegree(double rad){
 }
 
 // https://darkpgmr.tistory.com/121 Angle between two vectors
-double angleCalc(struct line3Dcoordinate* v1, struct line3Dcoordinate* v2){
-    double numerator, denominator, result;
+struct angleInBothDegreeAndRadians angleCalc(struct line3Dcoordinate* v1, struct line3Dcoordinate* v2){
+    struct angleInBothDegreeAndRadians result;
+    double numerator, denominator, calcresult;
     
     
     numerator=(((v1->vector.x)*(v2->vector.x))+((v1->vector.y)*(v2->vector.y))+((v1->vector.z)*(v2->vector.z)));
@@ -41,13 +47,15 @@ double angleCalc(struct line3Dcoordinate* v1, struct line3Dcoordinate* v2){
     
     //printf("\n\tnumerator: %lg\n\tdenominator: %lg",numerator,denominator);
     
-    result=acos(numerator/denominator);
-    if(isnan(result)!=0){
-        return 0;
+    calcresult=acos(numerator/denominator);
+    if(isnan(calcresult) == 0){// not nan
+        result.radian = calcresult;
+        result.degree = convertRadtoDegree(calcresult);
     }
     else{
-        return convertRadtoDegree(result);
+        result.radian = result.degree = 0.0;
     }
+    return result;
 }
 
 void conversion3dcoordinateToVector(struct line3Dcoordinate* temp){
@@ -91,7 +99,7 @@ void compVxVyVz(struct line3Dcoordinate* temp1, struct line3Dcoordinate* temp2){
 
 int main(int argc, const char * argv[]) {
     struct line3Dcoordinate l1, l2;
-    double angleBetweenTwoVectors;
+    struct angleInBothDegreeAndRadians angleBetweenTwoVectors;
     printf("input the first coordinate in x,y,z form: ");
     scanf("%lf,%lf,%lf",&l1.start.x,&l1.start.y,&l1.start.z);
     printf("input the second coordinate in x,y,z form: ");
@@ -109,8 +117,8 @@ int main(int argc, const char * argv[]) {
     
     compVxVyVz(&l1, &l2);
     
-    angleBetweenTwoVectors=angleCalc(&l1, &l2);
-    printf("\nThe angle between two vectors is %lg degree(s)\n", angleCalc(&l1, &l2));
+    angleBetweenTwoVectors = angleCalc(&l1, &l2);
+    printf("\nThe angle between two vectors is:\n\t %lg degree(s) or %lg radian(s)\n", angleBetweenTwoVectors.degree,angleBetweenTwoVectors.radian);
     
     return 0;
 }
