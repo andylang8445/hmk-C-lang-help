@@ -112,8 +112,8 @@ int main(int argc, const char * argv[]) {
     conversion3dcoordinateToVector(&l1);
     conversion3dcoordinateToVector(&l2);
     
-    printf("First Vector: %lg, %lg, %lg\n",l1.vector.x,l1.vector.y,l1.vector.z);
-    printf("Second Vector: %lg, %lg, %lg\n",l2.vector.x,l2.vector.y,l2.vector.z);
+    printf("\n\t First Vector: %lg, %lg, %lg\n",l1.vector.x,l1.vector.y,l1.vector.z);
+    printf("\t Second Vector: %lg, %lg, %lg\n\n",l2.vector.x,l2.vector.y,l2.vector.z);
     
     compVxVyVz(&l1, &l2);
     
