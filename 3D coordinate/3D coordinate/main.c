@@ -64,6 +64,7 @@ double sizeOfVector(struct line3Dcoordinate* v){
 
 // https://darkpgmr.tistory.com/121 Angle between two vectors
 struct angleInBothDegreeAndRadians angleCalc(struct line3Dcoordinate* v1, struct line3Dcoordinate* v2){
+    //printf("aaaaa");
     struct angleInBothDegreeAndRadians result;
     double numerator, denominator, calcresult;
     
@@ -77,10 +78,14 @@ struct angleInBothDegreeAndRadians angleCalc(struct line3Dcoordinate* v1, struct
     if(isnan(calcresult) == 0){// not nan
         result.radian = calcresult;
         result.degree = convertRadtoDegree(calcresult);
+        //printf("\t\tDegree: %lf",result.degree);
     }
     else{
         result.radian = result.degree = 0.0;
     }
+
+    
+    
     return result;
 }
 
@@ -135,6 +140,7 @@ struct allInOneStructure compVxVyVz(struct allInOneStructure* input){
                 return result;
         }
     }
+    result.angles=angleCalc(&input->v1, &input->v2);
     printf("Two vectors are neither parallel or coincidental.\nThey has POI(Point of Intersection)\n");
     return result;
 }
