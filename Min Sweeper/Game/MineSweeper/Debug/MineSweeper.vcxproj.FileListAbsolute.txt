@@ -1,0 +1,2 @@
+C:\Users\godSSom\Desktop\hmk-C-lang-help\Min Sweeper\Game\MineSweeper\Debug\MineSweeper.exe
+C:\Users\godSSom\Desktop\hmk-C-lang-help\Min Sweeper\Game\MineSweeper\Debug\MineSweeper.pdb
