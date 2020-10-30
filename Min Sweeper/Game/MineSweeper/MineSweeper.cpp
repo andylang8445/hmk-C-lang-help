@@ -9,6 +9,7 @@
 
 #pragma comment(lib, "winmm.lib")
 #pragma warning(disable : 4996)
+#pragma warning(disable : 6385)
 #pragma message("This program is designed to run on Windows")
 
 struct coordinate {
