@@ -17,7 +17,7 @@ struct coordinate {
 };
 
 CRITICAL_SECTION cs;
-struct coordinate user, mine[20];
+struct coordinate user;
 int map[30][30];
 int isRevieled[30][30], mineCnt = 0;
 
@@ -27,10 +27,19 @@ void moveCurser(short x, short y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
-void mineSeeding(int num) {//항상 num < 20
-	mineCnt = num;
+void mineSeeding(int num) {
+	printf("aa\n");
+	int x, y;
 	for (int i = 0; i < num; i++) {
-		
+		while (1) {
+			x = rand() % 30;
+			y = rand() % 30;
+			if (map[x][y] == 0) {
+				map[x][y] = -1;
+				break;
+			}
+		}
+		//printf("%d, %d\n", x, y);
 	}
 }
 
@@ -69,6 +78,7 @@ void initialize() {
 			printf("\n");
 		Sleep(10);
 	}
+	mineSeeding(15);
 	moveCurser(0, 0);
 	LeaveCriticalSection(&cs);
 }
@@ -77,11 +87,16 @@ void printMapAgain() {
 	system("cls");
 	for (int i = 0; i < 30; i++) {
 		for (int j = 0; j < 30; j++) {
-			if (isRevieled[i][j] == 0)//아직 뒤집지 않음
+			if (isRevieled[i][j] == 0&& map[i][j] != -1)//아직 뒤집지 않음
 				printf("*");
 			else if (isRevieled[i][j] == 2) {//유저가 지뢰로 표시
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
 				printf("#");
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+			}
+			else if (map[i][j] == -1) {//지뢰
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				printf("@");
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
 			}
 			if (j < 29)
@@ -95,6 +110,7 @@ void printMapAgain() {
 int main(void) {
 	int key;
 	srand(time(NULL));
+	mineSeeding(15);
 	InitializeCriticalSection(&cs);
 	system("title Mine Sweeper");
 	system("mode con: cols=60 lines=30");
@@ -163,7 +179,14 @@ int main(void) {
 					if (isRevieled[user.x][user.y] == 0) { //공개되지 않은 칸
 						isRevieled[user.x][user.y] = 1;
 						if (map[user.x][user.y] == -1) {//지뢰
-							//Game Over
+							moveCurser(2 * (user.x), user.y);
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+							printf("@");
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+							Sleep(1000);
+							system("cls");
+							printf("aa");
+							return 0;
 						}
 						else if (map[user.x][user.y] == 0) {//빈칸
 							moveCurser(2 * (user.x), user.y);
