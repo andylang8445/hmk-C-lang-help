@@ -28,7 +28,7 @@ void moveCurser(short x, short y) {
 }
 
 void mineSeeding(int num) {
-	printf("aa\n");
+	//printf("aa\n");
 	int x, y;
 	for (int i = 0; i < num; i++) {
 		while (1) {
@@ -110,7 +110,6 @@ void printMapAgain() {
 int main(void) {
 	int key;
 	srand(time(NULL));
-	mineSeeding(15);
 	InitializeCriticalSection(&cs);
 	system("title Mine Sweeper");
 	system("mode con: cols=60 lines=30");
@@ -185,7 +184,7 @@ int main(void) {
 							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
 							Sleep(1000);
 							system("cls");
-							printf("aa");
+							//printf("aa");
 							return 0;
 						}
 						else if (map[user.x][user.y] == 0) {//빈칸
