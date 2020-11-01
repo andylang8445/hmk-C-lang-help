@@ -17,9 +17,9 @@ struct coordinate {
 };
 
 CRITICAL_SECTION cs;
-struct coordinate user;
+struct coordinate user, mine[20];
 int map[30][30];
-int isRevieled[30][30];
+int isRevieled[30][30], mineCnt = 0;
 
 
 void moveCurser(short x, short y) {
@@ -27,9 +27,11 @@ void moveCurser(short x, short y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
-void mineSeeding(int num) {
-
-
+void mineSeeding(int num) {//항상 num < 20
+	mineCnt = num;
+	for (int i = 0; i < num; i++) {
+		
+	}
 }
 
 void CursorView(char show)//0: 커서숨기기, 1: 커서 보이기
@@ -92,6 +94,7 @@ void printMapAgain() {
 
 int main(void) {
 	int key;
+	srand(time(NULL));
 	InitializeCriticalSection(&cs);
 	system("title Mine Sweeper");
 	system("mode con: cols=60 lines=30");
