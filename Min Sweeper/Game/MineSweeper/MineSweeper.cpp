@@ -44,7 +44,21 @@ void mineSeeding(int num) {
 }
 
 void calculateNumbersAroundMines() {
-    
+    for(int i=0;i<30;i++){
+        for(int j=0;j<30;j++){
+            if(map[i][j]==-1){
+                for(int m=i-1;m<i+2;m++){
+                    if(m>=0&&m<30){
+                        for(int n=j-1;n<j+2;n++){
+                            if(n>=0&&n<30&&map[n][m]>=0){
+                                map[n][m]++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void CursorView(char show)//0: 커서숨기기, 1: 커서 보이기
@@ -109,6 +123,16 @@ void printMapAgain() {
 		if (i < 29)
 			printf("\n");
 	}
+}
+
+void printRawValues(){
+    for(int i=0;i<30;i++){
+        for(int j=0;j<30;j++){
+            printf("%d ",map[i][j]);
+        }
+        if(i<29)
+            printf("\n");
+    }
 }
 
 int main(void) {
