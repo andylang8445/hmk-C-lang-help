@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <Windows.h>
 #include <mmsystem.h>
 #include <process.h>
@@ -41,6 +41,10 @@ void mineSeeding(int num) {
 		}
 		//printf("%d, %d\n", x, y);
 	}
+}
+
+void calculateNumbersAroundMines() {
+    
 }
 
 void CursorView(char show)//0: 커서숨기기, 1: 커서 보이기
