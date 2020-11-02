@@ -19,7 +19,7 @@ struct coordinate {
 CRITICAL_SECTION cs;
 struct coordinate user;
 int map[30][30];
-int isRevieled[30][30], mineCnt = 0;
+int isRevieled[30][30], mineCnt = 0, isInitial = 1;
 
 
 void moveCurser(short x, short y) {
@@ -29,12 +29,16 @@ void moveCurser(short x, short y) {
 
 void mineSeeding(int num) {
 	//printf("aa\n");
-	int x, y;
+	int x, y, tmpChk;
 	for (int i = 0; i < num; i++) {
 		while (1) {
+			tmpChk = 0;
 			x = rand() % 30;
 			y = rand() % 30;
-			if (map[x][y] == 0) {
+			if (abs((user.x - x)) < 2 || abs((user.y - y)) < 2) {
+				tmpChk = 1;
+			}
+			if (map[x][y] == 0 && tmpChk != 1) {
 				map[x][y] = -1;
 				break;
 			}
@@ -50,8 +54,8 @@ void calculateNumbersAroundMines() {
                 for(int m=i-1;m<i+2;m++){
                     if(m>=0&&m<30){
                         for(int n=j-1;n<j+2;n++){
-                            if(n>=0&&n<30&&map[n][m]>=0){
-                                map[n][m]++;
+                            if(n>=0&&n<30&&map[m][n]>=0){
+                                map[m][n]++;
                             }
                         }
                     }
@@ -96,7 +100,6 @@ void initialize() {
 			printf("\n");
 		Sleep(10);
 	}
-	mineSeeding(15);
 	moveCurser(0, 0);
 	LeaveCriticalSection(&cs);
 }
@@ -105,7 +108,7 @@ void printMapAgain() {
 	system("cls");
 	for (int i = 0; i < 30; i++) {
 		for (int j = 0; j < 30; j++) {
-			if (isRevieled[i][j] == 0&& map[i][j] != -1)//아직 뒤집지 않음
+			if (isRevieled[i][j] == 0&& map[i][j] ==0)//아직 뒤집지 않음
 				printf("*");
 			else if (isRevieled[i][j] == 2) {//유저가 지뢰로 표시
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
@@ -117,6 +120,11 @@ void printMapAgain() {
 				printf("@");
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
 			}
+			else if (map[i][j] > 0) {
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
+				printf("%d", map[i][j]);
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+			}
 			if (j < 29)
 				printf(" ");
 		}
@@ -125,14 +133,20 @@ void printMapAgain() {
 	}
 }
 
-void printRawValues(){
-    for(int i=0;i<30;i++){
+void printRawValues() {
+	system("cls");
+	for (int i = 0; i < 30; i++) {
         for(int j=0;j<30;j++){
-            printf("%d ",map[i][j]);
+			printf("%d ", map[i][j]);
         }
-        if(i<29)
-            printf("\n");
+		if (i < 29)
+			printf("\n");
     }
+}
+
+void addMineToTheMap(int mineCntPar) {
+	mineSeeding(mineCntPar);
+	calculateNumbersAroundMines();
 }
 
 int main(void) {
@@ -140,9 +154,10 @@ int main(void) {
 	srand(time(NULL));
 	InitializeCriticalSection(&cs);
 	system("title Mine Sweeper");
-	system("mode con: cols=60 lines=30");
+	//system("mode con: cols=60 lines=30");
 	CursorView(0);
-	_beginthreadex(NULL, 0, (_beginthreadex_proc_type)initialize, NULL, 0, NULL);
+	initialize();
+	//_beginthreadex(NULL, 0, (_beginthreadex_proc_type)initialize, NULL, 0, NULL);
 	PlaySound(TEXT("NationalAnt.wav"), NULL, SND_ASYNC | SND_LOOP);
 	while (1) {
 		Sleep(1);
@@ -202,7 +217,15 @@ int main(void) {
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
 					printMapAgain();
 				}
+				else if (key == 'p') {
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					printRawValues();
+				}
 				else if (key == 'x') {//뒤집기
+					if (isInitial == 1) {
+						isInitial = 0;
+						addMineToTheMap(150);
+					}
 					if (isRevieled[user.x][user.y] == 0) { //공개되지 않은 칸
 						isRevieled[user.x][user.y] = 1;
 						if (map[user.x][user.y] == -1) {//지뢰
