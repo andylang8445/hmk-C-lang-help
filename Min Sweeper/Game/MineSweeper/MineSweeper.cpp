@@ -149,8 +149,23 @@ void addMineToTheMap(int mineCntPar) {
 	calculateNumbersAroundMines();
 }
 
-void flipNeighborCells(int x, int y){
-	
+void flipNeighborCells(int x, int y) {
+	if (isRevieled[x][y] == 1 || map[x][y] < 0) {
+		return;
+	}
+	else if (map[x][y] > 0) {
+		//칸 뒤집기
+		return;
+	}
+	for(int i=x-1;i<=x+1;i++){
+		if(i>0&&i<30){
+			for(int j=y-1;j<=y+1;j++){
+				if(j>0&&j<30){
+					flipNeighborCells(i,j);
+				}
+			}
+		}
+	}
 }
 
 int main(void) {
