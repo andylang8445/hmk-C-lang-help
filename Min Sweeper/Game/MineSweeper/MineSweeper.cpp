@@ -149,12 +149,28 @@ void addMineToTheMap(int mineCntPar) {
 	calculateNumbersAroundMines();
 }
 
+void flipGivenAddressCell(int x, int y){//지뢰가 있는 칸을 제외하고 주어진 주소의 칸을 알맞은 형태로 뒤집기
+	if (map[x][y] == 0) {//빈칸
+		moveCurser(2 * (x), y);
+		printf(" ");
+		isRevieled[x][y]=1;
+	}
+	else if (map[x][y] > 0) {//숫자
+		moveCurser(2 * (x), y);
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
+		printf("%d",map[x][y]);
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+		isRevieled[x][y]=1;
+	}
+	return;
+}
+
 void flipNeighborCells(int x, int y) {
 	if (isRevieled[x][y] == 1 || map[x][y] < 0) {
 		return;
 	}
 	else if (map[x][y] > 0) {
-		//칸 뒤집기
+		flipGivenAddressCell(x,y);
 		return;
 	}
 	for(int i=x-1;i<=x+1;i++){
@@ -166,6 +182,8 @@ void flipNeighborCells(int x, int y) {
 			}
 		}
 	}
+	flipGivenAddressCell(x,y);
+	return;
 }
 
 int main(void) {
@@ -257,9 +275,8 @@ int main(void) {
 							//printf("aa");
 							return 0;
 						}
-						else if (map[user.x][user.y] == 0) {//빈칸
-							moveCurser(2 * (user.x), user.y);
-							printf(" ");
+						else if(map[i][j]>=0){
+							flipGivenAddressCell(user.x,user.y);
 						}
 					}
 				}
