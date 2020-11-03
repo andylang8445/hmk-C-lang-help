@@ -149,6 +149,10 @@ void addMineToTheMap(int mineCntPar) {
 	calculateNumbersAroundMines();
 }
 
+void flipNeighborCells(int x, int y){
+	
+}
+
 int main(void) {
 	int key;
 	srand(time(NULL));
