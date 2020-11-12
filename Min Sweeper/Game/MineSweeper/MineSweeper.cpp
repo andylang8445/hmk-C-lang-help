@@ -165,7 +165,7 @@ void flipGivenAddressCell(int x, int y){//지뢰가 있는 칸을 제외하고 �
 	return;
 }
 
-void flipNeighborCells(int x, int y) {
+void flipNeighborCells(int x, int y) {//start working from here
 	if (isRevieled[x][y] == 1 || map[x][y] < 0) {
 		return;
 	}
@@ -275,7 +275,8 @@ int main(void) {
 							//printf("aa");
 							return 0;
 						}
-						else if(map[i][j]>=0){
+						else if(map[user.x][user.y]>=0){
+							flipNeighborCells(user.x, user.y);
 							flipGivenAddressCell(user.x,user.y);
 						}
 					}
