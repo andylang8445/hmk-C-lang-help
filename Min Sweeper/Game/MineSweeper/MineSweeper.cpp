@@ -20,6 +20,7 @@ CRITICAL_SECTION cs;
 struct coordinate user;
 int map[30][30];
 int isRevieled[30][30], mineCnt = 0, isInitial = 1;
+int mineAddrArray[2][30];
 
 
 void moveCurser(short x, short y) {
@@ -29,6 +30,7 @@ void moveCurser(short x, short y) {
 
 void mineSeeding(int num) {
 	//printf("aa\n");
+	srand(time(NULL));
 	int x, y, tmpChk;
 	for (int i = 0; i < num; i++) {
 		while (1) {
@@ -40,6 +42,9 @@ void mineSeeding(int num) {
 			}
 			if (map[x][y] == 0 && tmpChk != 1) {
 				map[x][y] = -1;
+				mineAddrArray[0][mineCnt] = x;
+				mineAddrArray[1][mineCnt] = y;
+				mineCnt++;
 				break;
 			}
 		}
@@ -100,6 +105,8 @@ void initialize() {
 			printf("\n");
 		Sleep(10);
 	}
+	moveCurser(65,3);
+	printf("Mine Left: %03d",mineCnt);
 	moveCurser(0, 0);
 	LeaveCriticalSection(&cs);
 }
@@ -166,23 +173,18 @@ void flipGivenAddressCell(int x, int y){//지뢰가 있는 칸을 제외하고 �
 }
 
 void flipNeighborCells(int x, int y) {//start working from here
-	if (isRevieled[x][y] == 1 || map[x][y] < 0) {
-		return;
-	}
-	else if (map[x][y] > 0) {
-		flipGivenAddressCell(x,y);
-		return;
-	}
-	for(int i=x-1;i<=x+1;i++){
-		if(i>0&&i<30){
-			for(int j=y-1;j<=y+1;j++){
-				if(j>0&&j<30){
-					flipNeighborCells(i,j);
+	for (int i = -1; i <= 1; i += 2) {
+		if ((x + i) >= 0 && (x + i) < 30) {
+			for (int j = -1; j <= 1; j += 2) {
+				if ((y + j) >= 0 && (y + j) < 30) {
+					if (map[x][j] != -1 && isRevieled[x][y] == 0) {
+						flipGivenAddressCell((x + i), (y + j));
+						flipNeighborCells((x + i), (y + j));
+					}
 				}
 			}
 		}
 	}
-	flipGivenAddressCell(x,y);
 	return;
 }
 
@@ -198,7 +200,27 @@ int main(void) {
 	PlaySound(TEXT("NationalAnt.wav"), NULL, SND_ASYNC | SND_LOOP);
 	while (1) {
 		Sleep(1);
+		if (mineCnt == 0 && isInitial == 0) {
+			int chkTmp = 1;
+			for (int i = 0; i < 30; i++) {
+				for (int j = 0; j < 30; j++) {
+					if (isRevieled[i][j] == 2 && map[i][j] != -1) {
+						chkTmp = 0;
+					}
+				}
+			}
+			if (chkTmp == 1) {
+				system("cls");
+				moveCurser(8, 10);
+				printf("Game Cleared!");
+				break;
+			}
+		}
 		if (_kbhit()) {
+			moveCurser(76, 3);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+			printf("%03d", mineCnt);
+			moveCurser(2 * (user.x), user.y);
 			key = _getch();
 			if (key == 224 || key == 0) {
 				key = _getch();
@@ -282,7 +304,8 @@ int main(void) {
 					}
 				}
 				else if (key == 'c') {//지뢰로 표시 토글
-					if (isRevieled[user.x][user.y] == 0) {//표시하기
+					if (isRevieled[user.x][user.y] == 0 && mineCnt > 0) {//표시하기
+						mineCnt--;
 						isRevieled[user.x][user.y] = 2;
 						moveCurser(2 * (user.x), user.y);
 						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
@@ -290,6 +313,7 @@ int main(void) {
 						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
 					}
 					else if (isRevieled[user.x][user.y] == 2) {//표시 지우기
+						mineCnt++;
 						isRevieled[user.x][user.y] = 0;
 						moveCurser(2 * (user.x), user.y);
 						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
